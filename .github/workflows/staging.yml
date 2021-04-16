@@ -1,25 +1,23 @@
 ---
 
-name: CI Latest
+name: CI Staging
 
 on:
   push:
-    branches-ignore: 
-      - master
+    branches:
       - staging
-      - develop
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: docker://ghcr.io/kciter/aws-ecr-action:develop
+    - uses: actions/checkout@v1
+    - uses: kciter/aws-ecr-action@v1
       with:
         access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         account_id: ${{ secrets.AWS_ACCOUNT_ID }}
         repo: logger
-        region: eu-west-3
-        tags: latest,${{ github.sha }}
+        region: eu-west-1
+        tags: staging,${{ github.sha }}
         create_repo: true

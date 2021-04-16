@@ -19,5 +19,5 @@ jobs:
         account_id: ${{ secrets.AWS_ACCOUNT_ID }}
         repo: logger
         region: eu-west-3
-        tags: develop
+        tags: develop,${{ github.sha }}
         create_repo: true
