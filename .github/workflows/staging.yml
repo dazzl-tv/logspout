@@ -1,11 +1,11 @@
 ---
 
-name: CI Develop
+name: CI Staging
 
 on:
   push:
     branches:
-      - develop
+      - staging
 
 jobs:
   build-and-push:
@@ -18,6 +18,6 @@ jobs:
         secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         account_id: ${{ secrets.AWS_ACCOUNT_ID }}
         repo: logger
-        region: eu-west-3
-        tags: develop,${{ github.sha }}
+        region: eu-west-1
+        tags: staging,${{ github.sha }}
         create_repo: true
