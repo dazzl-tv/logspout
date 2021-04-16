@@ -68,6 +68,10 @@ func getFormat() (Format, error) {
 	}
 }
 
+func getJanusInstanceId() string {
+	return cfg.GetEnvDefault("DAZZL_API_JANUSTREAM_ID", "42")
+}
+
 func getHostname() string {
 	content, err := ioutil.ReadFile("/etc/host_hostname")
 	if err == nil && len(content) > 0 {
@@ -433,4 +437,8 @@ func (m *Message) ContainerName() string {
 // ContainerNameSplitN returns the message's container name sliced at most "n" times using "sep"
 func (m *Message) ContainerNameSplitN(sep string, n int) []string {
 	return strings.SplitN(m.ContainerName(), sep, n)
+}
+
+func (m *Message) JanustreamId() string {
+	return getJanusInstanceId()
 }
