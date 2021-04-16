@@ -1,6 +1,6 @@
 ---
 
-name: CI
+name: CI Develop
 
 on:
   push:
@@ -20,5 +20,3 @@ jobs:
         region: eu-west-3
         tags: latest
         create_repo: true
-        set_repo_policy: true
-        repo_policy_file: repo-policy.json
