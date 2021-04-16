@@ -4,6 +4,10 @@ name: CI Latest
 
 on:
   push:
+    branches-ignore: 
+      - master
+      - staging
+      - develop
 
 jobs:
   build-and-push:
