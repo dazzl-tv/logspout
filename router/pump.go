@@ -82,6 +82,20 @@ func logDriverSupported(container *docker.Container) bool {
 	}
 }
 
+func sameComposition(container *docker.Container) bool {
+	includeOnly := cfg.GetEnvDefault("COMPOSITION", "42")
+
+	for _, element := range container.Config.Env {
+		value := strings.Split(element, "=")[1]
+
+		if value == includeOnly {
+			return false
+		}
+	}
+
+	return true
+}
+
 func ignoreContainer(container *docker.Container) bool {
 	for _, kv := range container.Config.Env {
 		kvp := strings.SplitN(kv, "=", 2)
@@ -215,6 +229,9 @@ func (p *LogsPump) pumpLogs(event *docker.APIEvents, backlog bool, inactivityTim
 	}
 	if !logDriverSupported(container) {
 		debug("pump.pumpLogs():", id, "ignored: log driver not supported")
+		return
+	}
+	if sameComposition(container) {
 		return
 	}
 
