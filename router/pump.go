@@ -219,19 +219,20 @@ func (p *LogsPump) pumpLogs(event *docker.APIEvents, backlog bool, inactivityTim
 	id := normalID(event.ID)
 	container, err := p.client.InspectContainerWithOptions(docker.InspectContainerOptions{ID: id})
 	assert(err, defaultPumpName)
+	if sameComposition(container) {
+		debug("pump.pumpLogs():", id, "ignored: oher composition - "+container.Name)
+		return
+	}
 	if ignoreContainerTTY(container) {
-		debug("pump.pumpLogs():", id, "ignored: tty enabled")
+		debug("pump.pumpLogs():", id, "ignored: tty enabled - "+container.Name)
 		return
 	}
 	if ignoreContainer(container) {
-		debug("pump.pumpLogs():", id, "ignored: environ ignore")
+		debug("pump.pumpLogs():", id, "ignored: environ ignore - "+container.Name)
 		return
 	}
 	if !logDriverSupported(container) {
 		debug("pump.pumpLogs():", id, "ignored: log driver not supported")
-		return
-	}
-	if sameComposition(container) {
 		return
 	}
 
