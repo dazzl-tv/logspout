@@ -82,6 +82,20 @@ func logDriverSupported(container *docker.Container) bool {
 	}
 }
 
+func sameComposition(container *docker.Container) bool {
+	includeOnly := cfg.GetEnvDefault("COMPOSITION", "42")
+
+	for _, element := range container.Config.Env {
+		value := strings.Split(element, "=")[1]
+
+		if value == includeOnly {
+			return false
+		}
+	}
+
+	return true
+}
+
 func ignoreContainer(container *docker.Container) bool {
 	for _, kv := range container.Config.Env {
 		kvp := strings.SplitN(kv, "=", 2)
@@ -205,12 +219,16 @@ func (p *LogsPump) pumpLogs(event *docker.APIEvents, backlog bool, inactivityTim
 	id := normalID(event.ID)
 	container, err := p.client.InspectContainerWithOptions(docker.InspectContainerOptions{ID: id})
 	assert(err, defaultPumpName)
+	if sameComposition(container) {
+		debug("pump.pumpLogs():", id, "ignored: oher composition - "+container.Name)
+		return
+	}
 	if ignoreContainerTTY(container) {
-		debug("pump.pumpLogs():", id, "ignored: tty enabled")
+		debug("pump.pumpLogs():", id, "ignored: tty enabled - "+container.Name)
 		return
 	}
 	if ignoreContainer(container) {
-		debug("pump.pumpLogs():", id, "ignored: environ ignore")
+		debug("pump.pumpLogs():", id, "ignored: environ ignore - "+container.Name)
 		return
 	}
 	if !logDriverSupported(container) {
